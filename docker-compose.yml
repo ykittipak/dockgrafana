@@ -1,0 +1,36 @@
+version: '3.6'
+
+networks:
+  monitor-net:
+    driver: bridge
+
+services:  
+# Define all service
+  grafana:
+      image: grafana/grafana:9.1.7
+      container_name: grafana
+      restart: always
+      ports:
+        - 3000:3000
+      environment:
+        - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}
+        - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-P@ssw0rd}
+        - GF_USERS_ALLOW_SIGN_UP=false
+        #- GF_SERVER_PROTOCOL=https
+        #- GF_SERVER_CERT_FILE=/etc/grafana/ssl/fullchain.pem
+        #- GF_SERVER_CERT_KEY=/etc/grafana/ssl/privkey.pem
+# Define by hostpath
+#      volumes: 
+#      - /Users/kittipak.y/Docker/data/grafana-demo:/var/lib/grafana
+
+# Define by docker volume
+      volumes: 
+        - ./provisioning/dashboards:/etc/grafana/provisioning/dashboards
+        #- ./ssl:/etc/grafana/ssl
+        - grafana_data:/var/lib/grafana
+# Define network
+      networks:
+        - monitor-net  
+# Define volumes
+volumes:
+    grafana_data:
